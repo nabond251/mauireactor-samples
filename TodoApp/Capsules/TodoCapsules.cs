@@ -17,7 +17,7 @@ public static class TodoCapsules
     /// <returns>Actions to add, update, or delete todos.</returns>
     internal static (
         Action<Todo> AddTodo,
-        Action<Todo> UpdateTodo,
+        Action<Todo, string?, bool?> UpdateTodo,
         Action<IEnumerable<Todo>> DeleteTodos)
         TodoItemsManagerCapsule(ICapsuleHandle use)
     {
@@ -29,13 +29,13 @@ public static class TodoCapsules
                 context.Add(todo);
                 context.Save();
             },
-            UpdateTodo: todo =>
+            UpdateTodo: (Todo todo, string? task, bool? done) =>
             {
                 context.Replace(todo, new Todo
                 {
                     Id = todo.Id,
-                    Task = todo.Task,
-                    Done = todo.Done
+                    Task = task ?? todo.Task,
+                    Done = done ?? todo.Done
                 });
                 context.Save();
             },
@@ -48,8 +48,7 @@ public static class TodoCapsules
     }
 
     /// <summary>
-    /// Represents the todos list using the filter from the
-    /// <see cref="FilterCapsule"/>.
+    /// Represents the todos list.
     /// </summary>
     /// <param name="use">Capsule handle.</param>
     /// <returns>Query of to-do list items.</returns>

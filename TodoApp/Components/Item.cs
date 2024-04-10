@@ -23,8 +23,7 @@ class Item(Todo item) : CapsuleConsumer
 
         void OnItemDoneChanged(Todo item, bool done)
         {
-            item.Done = done;
-            UpdateTodo(item);
+            UpdateTodo(item, null, done);
         }
     }
 }
