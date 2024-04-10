@@ -7,6 +7,7 @@ using Rearch.Reactor.Components;
 using System;
 using System.IO;
 using System.Reflection.Metadata;
+using TodoApp.Helpers;
 using TodoApp.Models;
 using TodoApp.Pages;
 
@@ -57,8 +58,10 @@ public static class MauiProgram
         });
 
 
+        var mauiApp = builder.Build();
 
+        ServiceHelper.Initialize(mauiApp.Services);
 
-        return builder.Build();
+        return mauiApp;
     }
 }

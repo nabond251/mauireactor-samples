@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static TodoApp.Capsules.TodoCapsules;
 using TodoApp.Models;
 
 namespace TodoApp.Pages;
@@ -23,16 +24,7 @@ partial class MainPage : CapsuleConsumer
 
     public override VisualNode Render(ICapsuleHandle use)
     {
-        var (todoItems, setTodoItems) = use.State<IEnumerable<Todo>>(
-            Enumerable.Empty<Todo>());
-
-        use.Effect(() =>
-        {
-            setTodoItems(_modelContext.Query<Todo>(
-                query => query.OrderBy(_ => _.Task)));
-
-            return () => { };
-        }, [_modelContext]);
+        var todoItems = use.Invoke(TodoItemsCapsule);
 
         return
             ContentPage(
