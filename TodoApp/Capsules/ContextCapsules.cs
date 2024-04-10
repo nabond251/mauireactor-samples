@@ -14,7 +14,6 @@ namespace TodoApp.Capsules
         /// dataset.
         internal static async Task<IModelContext> ContextAsyncCapsule(ICapsuleHandle use)
         {
-            await Task.Delay(1000);
             return (await ServiceHelper.ServicesAsync).GetRequiredService<IModelContext>();
         }
 
