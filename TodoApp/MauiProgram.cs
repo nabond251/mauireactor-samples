@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ReactorData;
 using ReactorData.Maui;
 using ReactorData.Sqlite;
+using Rearch.Reactor.Components;
 using System;
 using System.IO;
 using System.Reflection.Metadata;
@@ -25,7 +26,7 @@ public static class MauiProgram
 
         var builder = MauiApp.CreateBuilder();
         builder
-            .UseMauiReactorApp<MainPage>(app =>
+            .UseRearchReactorApp<MainPage>(app =>
             {
                 //app.AddResource("Resources/Styles/Colors.xaml");
                 //app.AddResource("Resources/Styles/Styles.xaml");

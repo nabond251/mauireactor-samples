@@ -1,5 +1,7 @@
 ﻿using MauiReactor;
 using ReactorData;
+using Rearch;
+using Rearch.Reactor.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,32 +16,51 @@ class MainPageState
     public IQuery<Todo> TodoItems { get; set; } = default!;
 }
 
-partial class MainPage : Component<MainPageState>
+partial class MainPage : CapsuleConsumer
 {
     [Inject]
     IModelContext _modelContext;
 
-    protected override void OnMounted()
+    public override VisualNode Render(ICapsuleHandle use)
     {
-        State.TodoItems = _modelContext.Query<Todo>(query => query.OrderBy(_ => _.Task));
+        var (todoItems, setTodoItems) = use.State<IEnumerable<Todo>>(
+            Enumerable.Empty<Todo>());
 
-        base.OnMounted();
+        use.Effect(() =>
+        {
+            setTodoItems(_modelContext.Query<Todo>(
+                query => query.OrderBy(_ => _.Task)));
+
+            return () => { };
+        }, [_modelContext]);
+
+        return
+            ContentPage(
+                Grid("Auto, *, Auto", "*",
+                    TodoEditor(OnCreatedNewTask),
+
+                    CollectionView()
+                        .ItemsSource(todoItems, RenderItem)
+                        .GridRow(1),
+
+                    Button("Clear List")
+                        .OnClicked(OnClearList)
+                        .GridRow(2)
+
+                ));
+
+        void OnCreatedNewTask(Todo todo)
+        {
+            _modelContext.Add(todo);
+            _modelContext.Save();
+        }
+
+        void OnClearList()
+        {
+            _modelContext.Delete([.. todoItems]);
+            _modelContext.Save();
+        }
     }
-
-    public override VisualNode Render()
-        => ContentPage(
-            Grid("Auto, *, Auto", "*",
-                TodoEditor(OnCreatedNewTask),
-
-                CollectionView()
-                    .ItemsSource(State.TodoItems, RenderItem)
-                    .GridRow(1),
-
-                Button("Clear List")
-                    .OnClicked(OnClearList)
-                    .GridRow(2)
-
-            ));    
 
     VisualNode RenderItem(Todo item)
         => Grid("54", "Auto, *",
@@ -70,18 +91,6 @@ partial class MainPage : Component<MainPageState>
     void OnItemDoneChanged(Todo item, bool done)
     {
         _modelContext.Replace(item, new Todo { Id = item.Id, Task = item.Task, Done = done });
-        _modelContext.Save();
-    }
-
-    void OnCreatedNewTask(Todo todo)
-    {
-        _modelContext.Add(todo);
-        _modelContext.Save();
-    }
-
-    void OnClearList()
-    {
-        _modelContext.Delete([.. State.TodoItems]);
         _modelContext.Save();
     }
 }

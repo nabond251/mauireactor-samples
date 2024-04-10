@@ -73,6 +73,7 @@
     <PackageReference Include="ReactorData" Version="1.0.15-beta" />
     <PackageReference Include="ReactorData.Sqlite" Version="1.0.15-beta" />
     <PackageReference Include="ReactorData.Maui" Version="1.0.15-beta" />
+    <PackageReference Include="Rearch.Reactor" Version="0.0.0-dev.4" />
   </ItemGroup>
 
 
